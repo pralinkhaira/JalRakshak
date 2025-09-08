@@ -56,8 +56,8 @@ Rural communities in Northeast India face repeated challenges of **contaminated 
 ```
 jalrakshak/
 │
-├── docs/               # Documentation, reports, and research papers
-├── hardware/           # IoT sensor schematics and PCB design
+├── ecg2/               # Documentation, reports, and research papers
+├── oximeter_max30102/           # IoT sensor schematics and PCB design
 ├── software/           # Source code for AI models, APIs, and dashboard
 ├── datasets/           # Water quality + health dataset samples
 ├── mobile-app/         # Mobile app for health workers (offline support)
