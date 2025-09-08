@@ -1,82 +1,97 @@
 # JalRakshak: Smart Community Health Monitoring & Early Warning System
 
 ## Overview
-JalRakshak (जलरक्षक) is an **AI-powered community health monitoring and early warning system** designed for **rural Northeast India**. It focuses on preventing outbreaks of **water-borne diseases** such as cholera, diarrhea, dysentery, and typhoid by integrating **IoT-based water quality monitoring**, **community health data collection**, and **AI-driven predictive analytics**.
+JalRakshak (जलरक्षक) is an **AI-powered health monitoring and early warning system** that predicts and detects **water-borne disease risks** in rural communities of Northeast India. It combines **IoT-based hardware sensors** (pH, TDS, Turbidity) with **AI models trained on synthetic datasets** to forecast water contamination levels and provide **Water Quality Index (WQI) predictions**.
+
+This project is an **extension of the earlier Vitals Monitoring System**, where ECG and Oximeter readings were tested with high accuracy. The experience with vitals anomaly detection has been adapted here to environmental health monitoring.
 
 ## Problem Statement
-Rural communities in Northeast India face repeated challenges of **contaminated water supplies** and **poor sanitation infrastructure**. Early detection of water-borne disease risks is often missed due to lack of continuous monitoring, delayed reporting, and limited healthcare access. JalRakshak aims to **bridge this gap** by providing **low-cost, real-time, and actionable insights** to health workers, NGOs, and government agencies.
+Rural areas in Northeast India face challenges from **unsafe drinking water** and **poor sanitation**, leading to frequent outbreaks of cholera, diarrhea, and typhoid. Traditional water quality testing is slow, expensive, and inaccessible. JalRakshak provides **real-time, low-cost, AI-driven insights** to prevent such outbreaks.
 
 ## Objectives
-- Monitor **water quality parameters** (pH, turbidity, TDS, microbial contamination).
-- Collect **community health reports** (fever, diarrhea, dehydration symptoms).
-- Use **AI/ML models** to detect outbreak risks and provide early warnings.
-- Provide **real-time dashboards** with **map-based risk visualization**.
-- Deliver **SMS/IVR alerts** to rural health workers and local communities.
+- Monitor **real-time water parameters**: pH, TDS, Turbidity (via hardware sensors).
+- Train AI models on **synthetic water datasets** with 10+ features (DO, BOD, COD, nitrate, phosphate, fecal coliform, etc.).
+- Predict **Water Quality Index (WQI)** and classify risk levels.
+- Extend proven vitals monitoring methods into water-borne disease prevention.
 
-## System Architecture
-1. **Data Collection Layer**  
-   - IoT sensors in community water sources.  
-   - Mobile apps / offline forms for health workers.  
+## Correlation & Workflow
 
-2. **Processing Layer**  
-   - Preprocessing of water & health data.  
-   - AI model for anomaly & outbreak detection.  
+### 1. Data Sources
+- **Hardware (IoT sensors):** pH, TDS, Turbidity readings from ESP32/Arduino.
+- **Synthetic Dataset:** `water_quality_synthetic.csv` & `water_quality_synthetic.xlsx` with lab-like indicators.
 
-3. **Application Layer**  
-   - Web dashboard (risk heatmaps, alerts).  
-   - SMS/IVR-based warning system for low-connectivity areas.  
+➡ **Correlation:** Hardware gives live values, dataset enriches AI model with broader features.
 
-## Key Features
--  **IoT Water Quality Monitoring** – pH, turbidity, TDS, bacterial indicators.  
--  **Community Health Tracking** – symptoms reported by health workers.  
--  **AI-Powered Predictions** – outbreak likelihood detection.  
--  **Rural Connectivity Support** – works with SMS/IVR for low internet zones.  
--  **Interactive Dashboard** – real-time maps of risk areas.  
--  **Low-Cost Deployment** – solar-powered IoT devices, scalable to rural clusters.  
+### 2. AI Models (`water_quality_prediction.py`)
+- **Random Forest (RF):** Baseline, good for small sensor inputs.
+- **XGBoost:** Higher accuracy if available.
+- **LSTM:** Forecasts seasonal water trends.
 
-## Target Audience
-- Rural healthcare centers & NGOs.  
-- Government health departments.  
-- Disaster management authorities.  
-- Community water management bodies.  
+➡ **Plan:** Train on dataset → Test on hardware → Predict WQI → Classify risk.
 
-## Impact
-- Early detection of outbreaks reduces large-scale health crises.  
-- Supports **health workers** with actionable, real-time insights.  
-- Reduces **healthcare costs** by preventing late-stage disease spread.  
-- Empowers **communities** with safer water and better health awareness.  
+### 3. Execution Plan
+- **Train Model:** Run `water_quality_prediction.py` on synthetic dataset.
+- **Save Model:** Export trained model as `model.pkl`.
+- **Integrate Hardware:** ESP32 sends [pH, TDS, Turbidity].
+- **AI Prediction:** Feed readings → Model → Predict WQI & contamination risk.
+- **Risk Mapping:**
+  - WQI > 80 → ✅ Safe  
+  - 50 ≤ WQI ≤ 80 → ⚠️ Moderate risk  
+  - WQI < 50 → ❌ High risk  
 
-## Future Scope
-- Integration with **national health records & schemes**.  
-- Expansion to monitor **vector-borne diseases** (malaria, dengue).  
-- Predictive analytics for **seasonal outbreak patterns**.  
-- Multilingual **mobile health apps** for communities.  
+### 4. Validation
+- Compare **hardware-only predictions** with **dataset-trained predictions**.
+- Adjust feature importance (e.g., turbidity & fecal coliform as strong indicators).
+
+### 5. Vitals Monitoring Connection
+- Old project: ECG, SpO₂ → anomaly detection.
+- New project: pH, TDS, Turbidity → anomaly detection + WQI.
+
+✅ Same AI pipeline: **collect → preprocess → predict → classify risk**.
 
 ## 📂 Repository Structure
 ```
-jalrakshak/
+pralinkhaira-jalrakshak/
 │
-├── ecg2/               # Documentation, reports, and research papers
-├── oximeter_max30102/           # IoT sensor schematics and PCB design
-├── software/           # Source code for AI models, APIs, and dashboard
-├── datasets/           # Water quality + health dataset samples
-├── mobile-app/         # Mobile app for health workers (offline support)
-├── alerts/             # SMS/IVR alert system scripts
-├── README.md           # Project overview
-└── LICENSE             # License information
+├── README.md
+├── LICENSE
+│
+├── hardware/
+│   ├── ph_sensor/
+│   │   └── ph_sensor.ino
+│   ├── turbidity_sensor/
+│   │   └── turbidity_sensor.ino
+│   ├── tds_sensor/
+│   │   └── tds_sensor.ino
+│   └── esp32_integration/
+│       └── water_monitoring.ino
+│
+├── vitals-monitoring/
+│   ├── ecg2/
+│   │   └── ecg2.ino
+│   └── oximeter_glucometer_bp/
+│       └── oximeter_glucometer_bp.ino
+│
+├── software/
+│   └── ai-models/
+│       ├── water_quality_prediction.py
+│       ├── anomaly_detection.py
+│       └── outbreak_prediction.py
+│
+├── datasets/
+│   ├── water-quality/
+│   │   ├── water_quality_synthetic.csv
+│   │   └── water_quality_synthetic.xlsx
+│   └── health-reports/
+│       └── ecg_data.csv
+│       └── ecg_data.xlxs
 ```
 
 ## Documentation
-- **Technical Report** – Detailed explanation of system design, methodology, and experiments.
-- **Pitch Deck** – Community-focused presentation for NGOs and government partnerships.
-- **API Documentation** – REST APIs for data integration and third-party use.
-- **Deployment Guide** – Steps to set up IoT devices, servers, and dashboards.
+- **water_quality_prediction.py** – Main AI model script with RF, XGBoost, LSTM.
+- **Synthetic Datasets** – CSV & XLSX with extended water quality features.
+- **Hardware Codes** – Arduino/ESP32 scripts for real-time water monitoring.
+- **Vitals Monitoring** – ECG and Oximeter codes for legacy validation.
 
-## Team Roles
-- **IoT & Hardware Developers** – Design and deploy sensor nodes.  
-- **AI/ML Engineers** – Develop predictive outbreak models.  
-- **Backend Developers** – API, data pipelines, database design.  
-- **Frontend Developers** – Dashboard and mobile app UI/UX.  
-- **Community Partners** – NGOs, local health workers for field data collection.  
 ---
-✨ *JalRakshak: Safeguarding Rural Communities, One Drop at a Time.*
+✨ *JalRakshak: From Vitals Monitoring to Water Quality Prediction – safeguarding communities, one drop at a time.*
