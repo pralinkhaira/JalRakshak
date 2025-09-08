@@ -44,10 +44,13 @@ Rural areas in Northeast India face challenges from **unsafe drinking water** an
 - Adjust feature importance (e.g., turbidity & fecal coliform as strong indicators).
 
 ### 5. Vitals Monitoring Connection
-- Old project: ECG, SpO₂ → anomaly detection.
-- New project: pH, TDS, Turbidity → anomaly detection + WQI.
+- Vitals Monitoring: ECG, SpO₂ → anomaly detection.
+- AI Health Monitoring: pH, TDS, Turbidity → anomaly detection + WQI.
 
 ✅ Same AI pipeline: **collect → preprocess → predict → classify risk**.
+
+## Schematics
+- Visit [here](https://pralinkhaira.github.io/Storage-Misc/w_q_schematics.html)
 
 ## 📂 Repository Structure
 ```
